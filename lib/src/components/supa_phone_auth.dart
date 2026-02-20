@@ -16,12 +16,20 @@ class SupaPhoneAuth extends StatefulWidget {
   /// Localization for the form
   final SupaPhoneAuthLocalization? localization;
 
+  /// Prefix icon for the phone number field
+  final Widget? prefixIconPhone;
+
+  /// Prefix icon for the password field
+  final Widget? prefixIconPassword;
+
   const SupaPhoneAuth({
     super.key,
     required this.authAction,
     required this.onSuccess,
     this.onError,
     this.localization,
+    this.prefixIconPhone = const Icon(Icons.phone),
+    this.prefixIconPassword = const Icon(Icons.lock),
   });
 
   @override
@@ -74,7 +82,7 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
                 return null;
               },
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.phone),
+                prefixIcon: widget.prefixIconPhone,
                 label: Text(localization.enterPhoneNumber),
               ),
               controller: _phone,
@@ -92,7 +100,7 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
                 return null;
               },
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock),
+                prefixIcon: widget.prefixIconPassword,
                 label: Text(localization.enterPassword),
                 suffixIcon: _passwordHasText
                     ? Align(

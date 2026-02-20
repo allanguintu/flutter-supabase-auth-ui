@@ -128,6 +128,12 @@ class SupaSocialsAuth extends StatefulWidget {
   /// Custom LaunchMode support
   final LaunchMode authScreenLaunchMode;
 
+  /// Optional widget builder to render above the buttons
+  final Widget Function(BuildContext)? headerBuilder;
+
+  /// Optional widget builder to render below the buttons
+  final Widget Function(BuildContext)? footerBuilder;
+
   const SupaSocialsAuth({
     super.key,
     this.nativeGoogleAuthConfig,
@@ -143,6 +149,8 @@ class SupaSocialsAuth extends StatefulWidget {
     this.queryParams,
     this.localization,
     this.authScreenLaunchMode = LaunchMode.platformDefault,
+    this.headerBuilder,
+    this.footerBuilder,
   });
 
   @override
@@ -432,7 +440,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
       },
     );
 
-    return widget.socialButtonVariant == SocialButtonVariant.icon
+    final authContent = widget.socialButtonVariant == SocialButtonVariant.icon
         ? Wrap(
             alignment: WrapAlignment.spaceEvenly,
             children: authButtons,
@@ -441,5 +449,16 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: authButtons,
           );
+    if (widget.headerBuilder == null && widget.footerBuilder == null) {
+      return authContent;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (widget.headerBuilder != null) widget.headerBuilder!(context),
+        authContent,
+        if (widget.footerBuilder != null) widget.footerBuilder!(context),
+      ],
+    );
   }
 }

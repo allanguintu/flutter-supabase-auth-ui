@@ -232,6 +232,12 @@ class SupaEmailAuth extends StatefulWidget {
   /// Whether the confirm password field should be displayed
   final bool showConfirmPasswordField;
 
+  /// Optional widget builder to render above the form
+  final Widget Function(BuildContext)? headerBuilder;
+
+  /// Optional widget builder to render below the form
+  final Widget Function(BuildContext)? footerBuilder;
+
   /// {@macro supa_email_auth}
   const SupaEmailAuth({
     super.key,
@@ -252,6 +258,8 @@ class SupaEmailAuth extends StatefulWidget {
     this.prefixIconEmail = const Icon(Icons.email),
     this.prefixIconPassword = const Icon(Icons.lock),
     this.showConfirmPasswordField = false,
+    this.headerBuilder,
+    this.footerBuilder,
   });
 
   @override
@@ -327,7 +335,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
   @override
   Widget build(BuildContext context) {
     final localization = _localization;
-    return AutofillGroup(
+    final form = AutofillGroup(
       child: Form(
         key: _formKey,
         child: Column(
@@ -607,6 +615,17 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
           ],
         ),
       ),
+    );
+    if (widget.headerBuilder == null && widget.footerBuilder == null) {
+      return form;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (widget.headerBuilder != null) widget.headerBuilder!(context),
+        form,
+        if (widget.footerBuilder != null) widget.footerBuilder!(context),
+      ],
     );
   }
 

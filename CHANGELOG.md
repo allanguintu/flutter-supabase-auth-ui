@@ -1,3 +1,8 @@
+## 0.6.4
+
+- feat: Add `prefixIconPhone` and `prefixIconPassword` parameters to `SupaPhoneAuth`
+- feat: Add `headerBuilder` and `footerBuilder` to `SupaEmailAuth` and `SupaSocialsAuth`
+
 ## 0.6.3
 
 - feat: Add `tooltip` to password visibility toggle buttons (`showPassword`/`hidePassword` per locale)
