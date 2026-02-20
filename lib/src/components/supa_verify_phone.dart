@@ -12,13 +12,13 @@ class SupaVerifyPhone extends StatefulWidget {
   final void Function(Object error)? onError;
 
   /// Localization for the form
-  final SupaVerifyPhoneLocalization localization;
+  final SupaVerifyPhoneLocalization? localization;
 
   const SupaVerifyPhone({
     super.key,
     required this.onSuccess,
     this.onError,
-    this.localization = const SupaVerifyPhoneLocalization(),
+    this.localization,
   });
 
   @override
@@ -43,7 +43,8 @@ class _SupaVerifyPhoneState extends State<SupaVerifyPhone> {
 
   @override
   Widget build(BuildContext context) {
-    final localization = widget.localization;
+    final localization = widget.localization ??
+        SupaVerifyPhoneLocalization.fromLocale(Localizations.localeOf(context));
     var args = ModalRoute.of(context)?.settings.arguments;
     if (args != null) data = args as Map;
     return Form(

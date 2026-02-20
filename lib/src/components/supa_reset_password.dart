@@ -15,14 +15,14 @@ class SupaResetPassword extends StatefulWidget {
   final void Function(Object error)? onError;
 
   /// Localization for the form
-  final SupaResetPasswordLocalization localization;
+  final SupaResetPasswordLocalization? localization;
 
   const SupaResetPassword({
     super.key,
     this.accessToken,
     required this.onSuccess,
     this.onError,
-    this.localization = const SupaResetPasswordLocalization(),
+    this.localization,
   });
 
   @override
@@ -41,7 +41,8 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    final localization = widget.localization;
+    final localization = widget.localization ??
+        SupaResetPasswordLocalization.fromLocale(Localizations.localeOf(context));
     return Form(
       key: _formKey,
       child: Column(

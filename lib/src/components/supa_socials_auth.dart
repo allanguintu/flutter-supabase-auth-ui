@@ -123,7 +123,7 @@ class SupaSocialsAuth extends StatefulWidget {
   final Map<OAuthProvider, Map<String, String>>? queryParams;
 
   /// Localization for the form
-  final SupaSocialsAuthLocalization localization;
+  final SupaSocialsAuthLocalization? localization;
 
   /// Custom LaunchMode support
   final LaunchMode authScreenLaunchMode;
@@ -141,7 +141,7 @@ class SupaSocialsAuth extends StatefulWidget {
     this.showSuccessSnackBar = true,
     this.scopes,
     this.queryParams,
-    this.localization = const SupaSocialsAuthLocalization(),
+    this.localization,
     this.authScreenLaunchMode = LaunchMode.platformDefault,
   });
 
@@ -151,7 +151,7 @@ class SupaSocialsAuth extends StatefulWidget {
 
 class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
   late final StreamSubscription<AuthState> _gotrueSubscription;
-  late final SupaSocialsAuthLocalization localization;
+  late SupaSocialsAuthLocalization localization;
 
   static bool _googleSignInInitialized = false;
 
@@ -217,9 +217,15 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    localization = widget.localization ??
+        SupaSocialsAuthLocalization.fromLocale(Localizations.localeOf(context));
+  }
+
+  @override
   void initState() {
     super.initState();
-    localization = widget.localization;
     _gotrueSubscription =
         Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final session = data.session;

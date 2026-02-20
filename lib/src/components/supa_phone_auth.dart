@@ -14,14 +14,14 @@ class SupaPhoneAuth extends StatefulWidget {
   final void Function(Object error)? onError;
 
   /// Localization for the form
-  final SupaPhoneAuthLocalization localization;
+  final SupaPhoneAuthLocalization? localization;
 
   const SupaPhoneAuth({
     super.key,
     required this.authAction,
     required this.onSuccess,
     this.onError,
-    this.localization = const SupaPhoneAuthLocalization(),
+    this.localization,
   });
 
   @override
@@ -47,7 +47,8 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
 
   @override
   Widget build(BuildContext context) {
-    final localization = widget.localization;
+    final localization = widget.localization ??
+        SupaPhoneAuthLocalization.fromLocale(Localizations.localeOf(context));
     final isSigningIn = widget.authAction == SupaAuthAction.signIn;
     return AutofillGroup(
       child: Form(

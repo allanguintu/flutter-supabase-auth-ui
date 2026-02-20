@@ -208,7 +208,7 @@ class SupaEmailAuth extends StatefulWidget {
   final Map<String, dynamic>? extraMetadata;
 
   /// Localization for the form
-  final SupaEmailAuthLocalization localization;
+  final SupaEmailAuthLocalization? localization;
 
   /// Whether the form should display sign-in or sign-up initially
   final bool isInitiallySigningIn;
@@ -235,7 +235,7 @@ class SupaEmailAuth extends StatefulWidget {
     this.onToggleRecoverPassword,
     this.metadataFields,
     this.extraMetadata,
-    this.localization = const SupaEmailAuthLocalization(),
+    this.localization,
     this.isInitiallySigningIn = true,
     this.prefixIconEmail = const Icon(Icons.email),
     this.prefixIconPassword = const Icon(Icons.lock),
@@ -256,11 +256,21 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
 
   bool _isLoading = false;
 
+  /// Resolved localization (auto or manual)
+  late SupaEmailAuthLocalization _localization;
+
   /// The user has pressed forgot password button
   bool _isRecoveringPassword = false;
 
   /// Focus node for email field
   final FocusNode _emailFocusNode = FocusNode();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _localization = widget.localization ??
+        SupaEmailAuthLocalization.fromLocale(Localizations.localeOf(context));
+  }
 
   @override
   void initState() {
@@ -291,7 +301,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
 
   @override
   Widget build(BuildContext context) {
-    final localization = widget.localization;
+    final localization = _localization;
     return AutofillGroup(
       child: Form(
         key: _formKey,
@@ -574,7 +584,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
     } catch (error) {
       if (widget.onError == null && mounted) {
         context.showErrorSnackBar(
-            '${widget.localization.unexpectedError}: $error');
+            '${_localization.unexpectedError}: $error');
       } else {
         widget.onError?.call(error);
       }
@@ -606,7 +616,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
       widget.onPasswordResetEmailSent?.call();
       // FIX use_build_context_synchronously
       if (!mounted) return;
-      context.showSnackBar(widget.localization.passwordResetSent);
+      context.showSnackBar(_localization.passwordResetSent);
       setState(() {
         _isRecoveringPassword = false;
       });

@@ -20,14 +20,14 @@ class SupaMagicAuth extends StatefulWidget {
   final void Function(Object error)? onError;
 
   /// Localization for the form
-  final SupaMagicAuthLocalization localization;
+  final SupaMagicAuthLocalization? localization;
 
   const SupaMagicAuth({
     super.key,
     this.redirectUrl,
     required this.onSuccess,
     this.onError,
-    this.localization = const SupaMagicAuthLocalization(),
+    this.localization,
   });
 
   @override
@@ -62,7 +62,8 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
 
   @override
   Widget build(BuildContext context) {
-    final localization = widget.localization;
+    final localization = widget.localization ??
+        SupaMagicAuthLocalization.fromLocale(Localizations.localeOf(context));
     return Form(
       key: _formKey,
       child: Column(
