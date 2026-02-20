@@ -404,19 +404,21 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   decoration: InputDecoration(
                     prefixIcon: widget.prefixIconPassword,
                     label: Text(localization.confirmPassword),
-                    suffixIcon: Align(
-                      widthFactor: 1.0,
-                      heightFactor: 1.0,
-                      child: IconButton(
-                        iconSize: 20,
-                        icon: Icon(_isConfirmPasswordVisible
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined),
-                        onPressed: () => setState(() =>
-                            _isConfirmPasswordVisible =
-                                !_isConfirmPasswordVisible),
-                      ),
-                    ),
+                    suffixIcon: _confirmPasswordHasText
+                        ? Align(
+                            widthFactor: 1.0,
+                            heightFactor: 1.0,
+                            child: IconButton(
+                              iconSize: 20,
+                              icon: Icon(_isConfirmPasswordVisible
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined),
+                              onPressed: () => setState(() =>
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible),
+                            ),
+                          )
+                        : null,
                   ),
                   obscureText: !_isConfirmPasswordVisible,
                   validator: (value) {
