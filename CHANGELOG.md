@@ -1,3 +1,24 @@
+## 0.6.1
+
+- fix: Use `Localizations.maybeLocaleOf()` with English fallback to prevent crash when no `MaterialApp` ancestor is present
+- fix: Disable email/phone submit button while request is pending to prevent double-submission
+- fix: Disable social auth buttons during OAuth flow to prevent race condition on double-tap
+- ux: Show password visibility toggle only when the field has content
+
+## 0.6.0
+
+- feat: Add `SupaAuthConfig` `InheritedWidget` for package-wide configuration (`snackBarBehavior`)
+- feat: Snackbar is now floating by default; removed action button
+- feat: Add multi-language support to all localization classes — named constructors `.fr()`, `.de()`, `.es()`, `.it()`, `.nl()`
+- feat: Add `fromLocale(Locale)` factory to all localization classes for automatic locale resolution
+- feat: `localization` parameter is now optional on all components — auto-resolved from ambient locale
+- feat: Add password visibility toggle to `SupaEmailAuth`, `SupaPhoneAuth`, and `SupaResetPassword`
+- feat: Add `autofillHints` parameter to `MetaDataField`
+- feat: Add `AutofillHints.newPassword` to confirm password field in `SupaEmailAuth`
+- feat: Add `AutofillHints.oneTimeCode` and numeric keyboard to OTP field in `SupaVerifyPhone`
+- fix: `onSuccess` callback called twice in `SupaSocialsAuth` — now only fires on `AuthChangeEvent.signedIn`
+- fix: `onToggleRecoverPassword` not called when pressing "Back to sign in" in `SupaEmailAuth`
+
 ## 0.5.5
 
 - feat: Add Confirm Password Field to SupaEmailAuth Component for Sign-Up Process [#129](https://github.com/supabase-community/flutter-auth-ui/pull/129)
