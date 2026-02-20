@@ -32,6 +32,7 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
   final _formKey = GlobalKey<FormState>();
   final _phone = TextEditingController();
   final _password = TextEditingController();
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -86,8 +87,15 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock),
                 label: Text(localization.enterPassword),
+                suffixIcon: IconButton(
+                  icon: Icon(_isPasswordVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                  onPressed: () =>
+                      setState(() => _isPasswordVisible = !_isPasswordVisible),
+                ),
               ),
-              obscureText: true,
+              obscureText: !_isPasswordVisible,
               controller: _password,
             ),
             spacer(16),

@@ -229,7 +229,9 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
     _gotrueSubscription =
         Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final session = data.session;
-      if (session != null && mounted) {
+      if (data.event == AuthChangeEvent.signedIn &&
+          session != null &&
+          mounted) {
         widget.onSuccess.call(session);
         if (widget.showSuccessSnackBar) {
           context.showSnackBar(localization.successSignInMessage);

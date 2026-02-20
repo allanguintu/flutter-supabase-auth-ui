@@ -32,6 +32,7 @@ class SupaResetPassword extends StatefulWidget {
 class _SupaResetPasswordState extends State<SupaResetPassword> {
   final _formKey = GlobalKey<FormState>();
   final _password = TextEditingController();
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -59,8 +60,16 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.lock),
               label: Text(localization.enterPassword),
+              suffixIcon: IconButton(
+                icon: Icon(_isPasswordVisible
+                    ? Icons.visibility_off
+                    : Icons.visibility),
+                onPressed: () =>
+                    setState(() => _isPasswordVisible = !_isPasswordVisible),
+              ),
             ),
             controller: _password,
+            obscureText: !_isPasswordVisible,
           ),
           spacer(16),
           ElevatedButton(

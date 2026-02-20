@@ -255,6 +255,8 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
   late final Map<String, MetadataController> _metadataControllers;
 
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   /// Resolved localization (auto or manual)
   late SupaEmailAuthLocalization _localization;
@@ -356,8 +358,15 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                 decoration: InputDecoration(
                   prefixIcon: widget.prefixIconPassword,
                   label: Text(localization.enterPassword),
+                  suffixIcon: IconButton(
+                    icon: Icon(_isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    onPressed: () => setState(
+                        () => _isPasswordVisible = !_isPasswordVisible),
+                  ),
                 ),
-                obscureText: true,
+                obscureText: !_isPasswordVisible,
                 controller: _passwordController,
                 onFieldSubmitted: (_) {
                   if (widget.metadataFields == null || _isSigningIn) {
@@ -373,8 +382,16 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   decoration: InputDecoration(
                     prefixIcon: widget.prefixIconPassword,
                     label: Text(localization.confirmPassword),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isConfirmPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () => setState(() =>
+                          _isConfirmPasswordVisible =
+                              !_isConfirmPasswordVisible),
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: !_isConfirmPasswordVisible,
                   validator: (value) {
                     if (value != _passwordController.text) {
                       return localization.confirmPasswordError;
