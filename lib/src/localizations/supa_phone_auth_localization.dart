@@ -8,6 +8,8 @@ class SupaPhoneAuthLocalization {
   final String signIn;
   final String signUp;
   final String unexpectedError;
+  final String showPassword;
+  final String hidePassword;
 
   const SupaPhoneAuthLocalization({
     this.enterPhoneNumber = 'Enter your phone number',
@@ -18,6 +20,8 @@ class SupaPhoneAuthLocalization {
     this.signIn = 'Sign In',
     this.signUp = 'Sign Up',
     this.unexpectedError = 'An unexpected error occurred',
+    this.showPassword = 'Show password',
+    this.hidePassword = 'Hide password',
   });
 
   const SupaPhoneAuthLocalization.fr()
@@ -27,7 +31,9 @@ class SupaPhoneAuthLocalization {
         passwordLengthError = '6 caractères min.',
         signIn = 'Se connecter',
         signUp = 'S\'inscrire',
-        unexpectedError = 'Erreur inattendue';
+        unexpectedError = 'Erreur inattendue',
+        showPassword = 'Afficher le mot de passe',
+        hidePassword = 'Masquer le mot de passe';
 
   const SupaPhoneAuthLocalization.de()
       : enterPhoneNumber = 'Telefonnummer eingeben',
@@ -36,7 +42,9 @@ class SupaPhoneAuthLocalization {
         passwordLengthError = 'Min. 6 Zeichen',
         signIn = 'Anmelden',
         signUp = 'Registrieren',
-        unexpectedError = 'Unerwarteter Fehler';
+        unexpectedError = 'Unerwarteter Fehler',
+        showPassword = 'Passwort anzeigen',
+        hidePassword = 'Passwort verbergen';
 
   const SupaPhoneAuthLocalization.es()
       : enterPhoneNumber = 'Tu número de teléfono',
@@ -45,7 +53,9 @@ class SupaPhoneAuthLocalization {
         passwordLengthError = 'Mín. 6 caracteres',
         signIn = 'Iniciar sesión',
         signUp = 'Registrarse',
-        unexpectedError = 'Error inesperado';
+        unexpectedError = 'Error inesperado',
+        showPassword = 'Mostrar contraseña',
+        hidePassword = 'Ocultar contraseña';
 
   const SupaPhoneAuthLocalization.it()
       : enterPhoneNumber = 'Il tuo numero di telefono',
@@ -54,7 +64,9 @@ class SupaPhoneAuthLocalization {
         passwordLengthError = 'Min. 6 caratteri',
         signIn = 'Accedi',
         signUp = 'Registrati',
-        unexpectedError = 'Errore imprevisto';
+        unexpectedError = 'Errore imprevisto',
+        showPassword = 'Mostra password',
+        hidePassword = 'Nascondi password';
 
   const SupaPhoneAuthLocalization.nl()
       : enterPhoneNumber = 'Jouw telefoonnummer',
@@ -63,7 +75,9 @@ class SupaPhoneAuthLocalization {
         passwordLengthError = 'Min. 6 tekens',
         signIn = 'Inloggen',
         signUp = 'Registreren',
-        unexpectedError = 'Onverwachte fout';
+        unexpectedError = 'Onverwachte fout',
+        showPassword = 'Wachtwoord tonen',
+        hidePassword = 'Wachtwoord verbergen';
 
   factory SupaPhoneAuthLocalization.fromLocale(Locale locale) {
     switch (locale.languageCode) {

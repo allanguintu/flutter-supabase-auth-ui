@@ -404,14 +404,19 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           child: widget.socialButtonVariant == SocialButtonVariant.icon
-              ? Material(
-                  shape: const CircleBorder(),
-                  elevation: 2,
-                  color: backgroundColor,
-                  child: InkResponse(
-                    radius: 24,
-                    onTap: _isLoading ? null : onAuthButtonPressed,
-                    child: iconWidget,
+              ? Semantics(
+                  label: localization.oAuthButtonLabels[socialProvider] ??
+                      socialProvider.labelText,
+                  button: true,
+                  child: Material(
+                    shape: const CircleBorder(),
+                    elevation: 2,
+                    color: backgroundColor,
+                    child: InkResponse(
+                      radius: 24,
+                      onTap: _isLoading ? null : onAuthButtonPressed,
+                      child: iconWidget,
+                    ),
                   ),
                 )
               : ElevatedButton.icon(

@@ -17,6 +17,8 @@ class SupaEmailAuthLocalization {
   final String requiredFieldError;
   final String confirmPasswordError;
   final String confirmPassword;
+  final String showPassword;
+  final String hidePassword;
 
   const SupaEmailAuthLocalization({
     this.enterEmail = 'Enter your email',
@@ -36,6 +38,8 @@ class SupaEmailAuthLocalization {
     this.requiredFieldError = 'This field is required',
     this.confirmPasswordError = 'Passwords do not match',
     this.confirmPassword = 'Confirm Password',
+    this.showPassword = 'Show password',
+    this.hidePassword = 'Hide password',
   });
 
   const SupaEmailAuthLocalization.fr()
@@ -54,7 +58,9 @@ class SupaEmailAuthLocalization {
         unexpectedError = 'Erreur inattendue',
         requiredFieldError = 'Champ requis',
         confirmPasswordError = 'Mots de passe différents',
-        confirmPassword = 'Confirmer le mot de passe';
+        confirmPassword = 'Confirmer le mot de passe',
+        showPassword = 'Afficher le mot de passe',
+        hidePassword = 'Masquer le mot de passe';
 
   const SupaEmailAuthLocalization.de()
       : enterEmail = 'E-Mail eingeben',
@@ -72,7 +78,9 @@ class SupaEmailAuthLocalization {
         unexpectedError = 'Unerwarteter Fehler',
         requiredFieldError = 'Pflichtfeld',
         confirmPasswordError = 'Passwörter stimmen nicht überein',
-        confirmPassword = 'Passwort bestätigen';
+        confirmPassword = 'Passwort bestätigen',
+        showPassword = 'Passwort anzeigen',
+        hidePassword = 'Passwort verbergen';
 
   const SupaEmailAuthLocalization.es()
       : enterEmail = 'Tu correo',
@@ -90,7 +98,9 @@ class SupaEmailAuthLocalization {
         unexpectedError = 'Error inesperado',
         requiredFieldError = 'Campo requerido',
         confirmPasswordError = 'Las contraseñas no coinciden',
-        confirmPassword = 'Confirmar contraseña';
+        confirmPassword = 'Confirmar contraseña',
+        showPassword = 'Mostrar contraseña',
+        hidePassword = 'Ocultar contraseña';
 
   const SupaEmailAuthLocalization.it()
       : enterEmail = 'La tua email',
@@ -108,7 +118,9 @@ class SupaEmailAuthLocalization {
         unexpectedError = 'Errore imprevisto',
         requiredFieldError = 'Campo obbligatorio',
         confirmPasswordError = 'Le password non coincidono',
-        confirmPassword = 'Conferma password';
+        confirmPassword = 'Conferma password',
+        showPassword = 'Mostra password',
+        hidePassword = 'Nascondi password';
 
   const SupaEmailAuthLocalization.nl()
       : enterEmail = 'Jouw e-mail',
@@ -126,7 +138,9 @@ class SupaEmailAuthLocalization {
         unexpectedError = 'Onverwachte fout',
         requiredFieldError = 'Verplicht veld',
         confirmPasswordError = 'Wachtwoorden komen niet overeen',
-        confirmPassword = 'Bevestig wachtwoord';
+        confirmPassword = 'Bevestig wachtwoord',
+        showPassword = 'Wachtwoord tonen',
+        hidePassword = 'Wachtwoord verbergen';
 
   factory SupaEmailAuthLocalization.fromLocale(Locale locale) {
     switch (locale.languageCode) {

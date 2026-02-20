@@ -1,3 +1,8 @@
+## 0.6.3
+
+- feat: Add `tooltip` to password visibility toggle buttons (`showPassword`/`hidePassword` per locale)
+- feat: Add `semanticsLabel` via `Semantics` wrapper on icon-only social auth buttons
+
 ## 0.6.2
 
 - feat: Add `keyboardType` parameter to `MetaDataField` for flexible keyboard control

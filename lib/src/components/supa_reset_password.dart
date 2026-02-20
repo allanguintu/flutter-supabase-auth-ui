@@ -77,6 +77,9 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
                       heightFactor: 1.0,
                       child: IconButton(
                         iconSize: 20,
+                        tooltip: _isPasswordVisible
+                            ? localization.hidePassword
+                            : localization.showPassword,
                         icon: Icon(_isPasswordVisible
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined),
