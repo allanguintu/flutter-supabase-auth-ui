@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'supa_auth_config.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -18,6 +19,7 @@ extension ShowSnackBar on BuildContext {
     Color? backgroundColor,
   }) {
     ScaffoldMessenger.of(this).showSnackBar(SnackBar(
+      behavior: SupaAuthConfig.of(this).snackBarBehavior,
       content: Text(
         message,
         style: textColor == null ? null : TextStyle(color: textColor),

@@ -1,4 +1,4 @@
-library supabase_auth_ui;
+library;
 
 export 'src/components/supa_email_auth.dart';
 export 'src/components/supa_magic_auth.dart';
@@ -7,6 +7,7 @@ export 'src/components/supa_socials_auth.dart';
 export 'src/components/supa_phone_auth.dart';
 export 'src/components/supa_verify_phone.dart';
 export 'src/utils/supa_auth_action.dart';
+export 'src/utils/supa_auth_config.dart';
 export 'src/localizations/supa_email_auth_localization.dart';
 export 'src/localizations/supa_magic_auth_localization.dart';
 export 'src/localizations/supa_phone_auth_localization.dart';
