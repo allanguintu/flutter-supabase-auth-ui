@@ -1,3 +1,8 @@
+## 0.6.2
+
+- feat: Add `keyboardType` parameter to `MetaDataField` for flexible keyboard control
+- feat: Add `obscureText` parameter to `MetaDataField` for masking sensitive fields
+
 ## 0.6.1
 
 - fix: Use `Localizations.maybeLocaleOf()` with English fallback to prevent crash when no `MaterialApp` ancestor is present

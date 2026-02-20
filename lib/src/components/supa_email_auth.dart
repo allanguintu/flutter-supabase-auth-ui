@@ -36,6 +36,12 @@ class MetaDataField {
   /// Autofill hints for the field (e.g. [AutofillHints.username])
   final List<String>? autofillHints;
 
+  /// Keyboard type for the field (e.g. [TextInputType.emailAddress])
+  final TextInputType? keyboardType;
+
+  /// Whether the field content should be obscured (e.g. for referral codes)
+  final bool obscureText;
+
   /// {@macro metadata_field}
   MetaDataField({
     required this.label,
@@ -43,6 +49,8 @@ class MetaDataField {
     this.validator,
     this.prefixIcon,
     this.autofillHints,
+    this.keyboardType,
+    this.obscureText = false,
   });
 }
 
@@ -496,6 +504,8 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                                   _metadataControllers[metadataField.key]
                                       as TextEditingController,
                               autofillHints: metadataField.autofillHints,
+                              keyboardType: metadataField.keyboardType,
+                              obscureText: metadataField.obscureText,
                               textInputAction:
                                   widget.metadataFields!.last == metadataField
                                       ? TextInputAction.done
