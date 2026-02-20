@@ -1,3 +1,7 @@
+## 0.6.5
+
+- feat: Add `clearOnError` (bool, default `false`) to `SupaEmailAuth` and `SupaPhoneAuth` — clears password fields after an authentication error
+
 ## 0.6.4
 
 - feat: Add `prefixIconPhone` and `prefixIconPassword` parameters to `SupaPhoneAuth`

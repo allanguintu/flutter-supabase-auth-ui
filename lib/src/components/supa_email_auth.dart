@@ -232,6 +232,9 @@ class SupaEmailAuth extends StatefulWidget {
   /// Whether the confirm password field should be displayed
   final bool showConfirmPasswordField;
 
+  /// If `true`, clears password fields when an authentication error occurs
+  final bool clearOnError;
+
   /// Optional widget builder to render above the form
   final Widget Function(BuildContext)? headerBuilder;
 
@@ -258,6 +261,7 @@ class SupaEmailAuth extends StatefulWidget {
     this.prefixIconEmail = const Icon(Icons.email),
     this.prefixIconPassword = const Icon(Icons.lock),
     this.showConfirmPasswordField = false,
+    this.clearOnError = false,
     this.headerBuilder,
     this.footerBuilder,
   });
@@ -673,6 +677,10 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
       } else {
         widget.onError?.call(error);
       }
+      if (widget.clearOnError) {
+        _passwordController.clear();
+        _confirmPasswordController.clear();
+      }
       _emailFocusNode.requestFocus();
     } catch (error) {
       if (widget.onError == null && mounted) {
@@ -680,6 +688,10 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
             '${_localization.unexpectedError}: $error');
       } else {
         widget.onError?.call(error);
+      }
+      if (widget.clearOnError) {
+        _passwordController.clear();
+        _confirmPasswordController.clear();
       }
       _emailFocusNode.requestFocus();
     }

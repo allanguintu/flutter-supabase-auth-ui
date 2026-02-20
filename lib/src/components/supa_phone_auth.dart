@@ -22,6 +22,9 @@ class SupaPhoneAuth extends StatefulWidget {
   /// Prefix icon for the password field
   final Widget? prefixIconPassword;
 
+  /// If `true`, clears the password field when an authentication error occurs
+  final bool clearOnError;
+
   const SupaPhoneAuth({
     super.key,
     required this.authAction,
@@ -30,6 +33,7 @@ class SupaPhoneAuth extends StatefulWidget {
     this.localization,
     this.prefixIconPhone = const Icon(Icons.phone),
     this.prefixIconPassword = const Icon(Icons.lock),
+    this.clearOnError = false,
   });
 
   @override
@@ -176,7 +180,7 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
                           setState(() {
                             _isLoading = false;
                             _phone.text = '';
-                            _password.text = '';
+                            if (widget.clearOnError) _password.clear();
                           });
                         }
                       }
