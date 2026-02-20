@@ -33,12 +33,16 @@ class MetaDataField {
   /// Icon to show as the prefix icon in TextFormField
   final Icon? prefixIcon;
 
+  /// Autofill hints for the field (e.g. [AutofillHints.username])
+  final List<String>? autofillHints;
+
   /// {@macro metadata_field}
   MetaDataField({
     required this.label,
     required this.key,
     this.validator,
     this.prefixIcon,
+    this.autofillHints,
   });
 }
 
@@ -476,6 +480,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                               controller:
                                   _metadataControllers[metadataField.key]
                                       as TextEditingController,
+                              autofillHints: metadataField.autofillHints,
                               textInputAction:
                                   widget.metadataFields!.last == metadataField
                                       ? TextInputAction.done
