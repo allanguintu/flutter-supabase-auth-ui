@@ -153,29 +153,35 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
   late final StreamSubscription<AuthState> _gotrueSubscription;
   late final SupaSocialsAuthLocalization localization;
 
+  static bool _googleSignInInitialized = false;
+
   /// Performs Google sign in on Android and iOS
   Future<AuthResponse> _nativeGoogleSignIn({
     required String? webClientId,
     required String? iosClientId,
   }) async {
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: iosClientId,
-      serverClientId: webClientId,
-    );
+    final googleSignIn = GoogleSignIn.instance;
 
-    final googleUser = await googleSignIn.signIn();
-    final googleAuth = await googleUser!.authentication;
-    final accessToken = googleAuth.accessToken;
-    final idToken = googleAuth.idToken;
-
-    if (accessToken == null) {
-      throw const AuthException(
-          'No Access Token found from Google sign in result.');
+    if (!_googleSignInInitialized) {
+      await googleSignIn.initialize(
+        clientId: iosClientId,
+        serverClientId: webClientId,
+      );
+      _googleSignInInitialized = true;
     }
+
+    final googleUser = await googleSignIn.authenticate();
+    final idToken = googleUser.authentication.idToken;
+
     if (idToken == null) {
       throw const AuthException(
           'No ID Token found from Google sign in result.');
     }
+
+    // Try to get access token silently (may be null if not yet authorized)
+    final authorization = await googleUser.authorizationClient
+        .authorizationForScopes([]);
+    final accessToken = authorization?.accessToken;
 
     return supabase.auth.signInWithIdToken(
       provider: OAuthProvider.google,
