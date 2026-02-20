@@ -88,6 +88,7 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
                 prefixIcon: const Icon(Icons.lock),
                 label: Text(localization.enterPassword),
                 suffixIcon: IconButton(
+                  iconSize: 18,
                   icon: Icon(_isPasswordVisible
                       ? Icons.visibility_off
                       : Icons.visibility),

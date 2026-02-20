@@ -61,6 +61,7 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
               prefixIcon: const Icon(Icons.lock),
               label: Text(localization.enterPassword),
               suffixIcon: IconButton(
+                iconSize: 18,
                 icon: Icon(_isPasswordVisible
                     ? Icons.visibility_off
                     : Icons.visibility),

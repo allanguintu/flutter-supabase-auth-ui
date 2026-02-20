@@ -359,6 +359,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                   prefixIcon: widget.prefixIconPassword,
                   label: Text(localization.enterPassword),
                   suffixIcon: IconButton(
+                    iconSize: 18,
                     icon: Icon(_isPasswordVisible
                         ? Icons.visibility_off
                         : Icons.visibility),
@@ -383,6 +384,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                     prefixIcon: widget.prefixIconPassword,
                     label: Text(localization.confirmPassword),
                     suffixIcon: IconButton(
+                      iconSize: 18,
                       icon: Icon(_isConfirmPasswordVisible
                           ? Icons.visibility_off
                           : Icons.visibility),
