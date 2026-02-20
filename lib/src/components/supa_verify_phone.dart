@@ -53,6 +53,8 @@ class _SupaVerifyPhoneState extends State<SupaVerifyPhone> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
+            autofillHints: const [AutofillHints.oneTimeCode],
+            keyboardType: TextInputType.number,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return localization.enterOneTimeCode;

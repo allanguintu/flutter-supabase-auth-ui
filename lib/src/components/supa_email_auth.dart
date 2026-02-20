@@ -369,6 +369,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                 spacer(16),
                 TextFormField(
                   controller: _confirmPasswordController,
+                  autofillHints: const [AutofillHints.newPassword],
                   decoration: InputDecoration(
                     prefixIcon: widget.prefixIconPassword,
                     label: Text(localization.confirmPassword),
