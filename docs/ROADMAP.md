@@ -52,8 +52,61 @@
 
 ## 0.7.X — Upstream issues & PRs review
 
-- Review open issues and pull requests on
-  [supabase-community/flutter-auth-ui](https://github.com/supabase-community/flutter-auth-ui)
-  and integrate relevant fixes/features not yet covered.
-  - Issues: https://github.com/supabase-community/flutter-auth-ui/issues
-  - Pull Requests: https://github.com/supabase-community/flutter-auth-ui/pulls
+Sources:
+[Issues](https://github.com/supabase-community/flutter-auth-ui/issues) ·
+[Pull Requests](https://github.com/supabase-community/flutter-auth-ui/pulls)
+
+Already covered in our fork (no action): #147, #148, #149 (onToggleRecoverPassword), #135, #128 (onSuccess twice).
+
+---
+
+### Fixes
+
+#### 0.7.0
+
+- **Fix** `BooleanMetaDataField` with `value: true` + `isRequired: true` rejects the initial value — [Issue #145](https://github.com/supabase-community/flutter-auth-ui/issues/145)
+  — Internal state `_value` is always initialised to `false` regardless of `widget.value`.
+  Fix: seed `_value = widget.value` in `initState`.
+
+- **Fix** `OAuthProvider.slackOidc` and `linkedInOidc` have no icon, colour or label — [PR #127](https://github.com/supabase-community/flutter-auth-ui/pull/127)
+  — Add them as aliases of their non-OIDC counterparts in the `OAuthProvider` extension.
+
+#### 0.7.2
+
+- **Fix** Sign in with Apple missing full name — [Issue #133](https://github.com/supabase-community/flutter-auth-ui/issues/133)
+  — Apple provides `givenName`/`familyName` outside the ID token (once only, at first sign-in).
+  After `signInWithIdToken`, call `updateUser(data: {'full_name': ...})` if
+  `AuthorizationCredentialAppleID` contains a name.
+
+#### 0.7.5
+
+- **Fix** Anonymous user → OAuth re-link fails with `Identity is already linked` — [Issue #103](https://github.com/supabase-community/flutter-auth-ui/issues/103)
+  — After sign-out a new anonymous session is automatically created;
+  re-signing with the same OAuth provider triggers a conflict.
+  Needs detection of the anonymous session + use of `linkIdentity` instead of `signInWithOAuth`.
+
+---
+
+### Features
+
+#### 0.7.1
+
+- **Feature** `prefilledEmail` / `prefilledPassword` on `SupaEmailAuth` — [PR #143](https://github.com/supabase-community/flutter-auth-ui/pull/143)
+  — Initialise the `TextEditingController` with the supplied values.
+  Useful for deep-link flows (e.g. invite email pre-fills the address).
+
+- **Feature** `onPasswordResetEmailSent(String email)` callback — [PR #146](https://github.com/supabase-community/flutter-auth-ui/pull/146)
+  — Current callback has no parameter; passing the email lets the app chain
+  an OTP verification screen without asking for the address again.
+
+#### 0.7.3
+
+- **Feature** OTP-based password recovery flow — [PR #130](https://github.com/supabase-community/flutter-auth-ui/pull/130)
+  — Alternative to the magic-link reset: user enters their email + a 6-digit OTP.
+  Calls `verifyOTP(type: OtpType.recovery)`.
+
+#### 0.7.4
+
+- **Feature** `SupaAvatarAuth` component — [PR #136](https://github.com/supabase-community/flutter-auth-ui/pull/136)
+  — New widget for uploading a profile picture to Supabase Storage
+  (camera / gallery picker). Can be used standalone on a profile screen.
