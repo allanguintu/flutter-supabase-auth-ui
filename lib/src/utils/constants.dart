@@ -16,7 +16,6 @@ extension ShowSnackBar on BuildContext {
     String message, {
     Color? textColor,
     Color? backgroundColor,
-    String? actionLabel,
   }) {
     ScaffoldMessenger.of(this).showSnackBar(SnackBar(
       content: Text(
@@ -24,23 +23,15 @@ extension ShowSnackBar on BuildContext {
         style: textColor == null ? null : TextStyle(color: textColor),
       ),
       backgroundColor: backgroundColor,
-      action: SnackBarAction(
-        label: actionLabel ?? 'ok',
-        onPressed: () {},
-      ),
     ));
   }
 
   /// Displays a red snackbar indicating error
-  void showErrorSnackBar(
-    String message, {
-    String? actionLabel,
-  }) {
+  void showErrorSnackBar(String message) {
     showSnackBar(
       message,
       textColor: Theme.of(this).colorScheme.onErrorContainer,
       backgroundColor: Theme.of(this).colorScheme.errorContainer,
-      actionLabel: actionLabel,
     );
   }
 }
