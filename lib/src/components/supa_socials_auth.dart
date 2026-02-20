@@ -152,6 +152,7 @@ class SupaSocialsAuth extends StatefulWidget {
 class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
   late final StreamSubscription<AuthState> _gotrueSubscription;
   late SupaSocialsAuthLocalization localization;
+  bool _isLoading = false;
 
   static bool _googleSignInInitialized = false;
 
@@ -220,7 +221,8 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     localization = widget.localization ??
-        SupaSocialsAuthLocalization.fromLocale(Localizations.localeOf(context));
+        SupaSocialsAuthLocalization.fromLocale(
+            Localizations.maybeLocaleOf(context) ?? const Locale('en'));
   }
 
   @override
@@ -327,6 +329,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
         }
 
         onAuthButtonPressed() async {
+          setState(() => _isLoading = true);
           try {
             // Check if native Google login should be performed
             if (socialProvider == OAuthProvider.google) {
@@ -386,6 +389,8 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
             } else {
               widget.onError?.call(error);
             }
+          } finally {
+            if (mounted) setState(() => _isLoading = false);
           }
         }
 
@@ -405,14 +410,14 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
                   color: backgroundColor,
                   child: InkResponse(
                     radius: 24,
-                    onTap: onAuthButtonPressed,
+                    onTap: _isLoading ? null : onAuthButtonPressed,
                     child: iconWidget,
                   ),
                 )
               : ElevatedButton.icon(
                   icon: iconWidget,
                   style: authButtonStyle,
-                  onPressed: onAuthButtonPressed,
+                  onPressed: _isLoading ? null : onAuthButtonPressed,
                   label: Text(
                     localization.oAuthButtonLabels[socialProvider] ??
                         socialProvider.labelText,

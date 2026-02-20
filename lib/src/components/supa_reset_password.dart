@@ -33,6 +33,16 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
   final _formKey = GlobalKey<FormState>();
   final _password = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _passwordHasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _password.addListener(() {
+      final hasText = _password.text.isNotEmpty;
+      if (hasText != _passwordHasText) setState(() => _passwordHasText = hasText);
+    });
+  }
 
   @override
   void dispose() {
@@ -43,7 +53,8 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
   @override
   Widget build(BuildContext context) {
     final localization = widget.localization ??
-        SupaResetPasswordLocalization.fromLocale(Localizations.localeOf(context));
+        SupaResetPasswordLocalization.fromLocale(
+        Localizations.maybeLocaleOf(context) ?? const Locale('en'));
     return Form(
       key: _formKey,
       child: Column(
@@ -60,18 +71,20 @@ class _SupaResetPasswordState extends State<SupaResetPassword> {
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.lock),
               label: Text(localization.enterPassword),
-              suffixIcon: Align(
-                widthFactor: 1.0,
-                heightFactor: 1.0,
-                child: IconButton(
-                  iconSize: 20,
-                  icon: Icon(_isPasswordVisible
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined),
-                  onPressed: () =>
-                      setState(() => _isPasswordVisible = !_isPasswordVisible),
-                ),
-              ),
+              suffixIcon: _passwordHasText
+                  ? Align(
+                      widthFactor: 1.0,
+                      heightFactor: 1.0,
+                      child: IconButton(
+                        iconSize: 20,
+                        icon: Icon(_isPasswordVisible
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined),
+                        onPressed: () => setState(
+                            () => _isPasswordVisible = !_isPasswordVisible),
+                      ),
+                    )
+                  : null,
             ),
             controller: _password,
             obscureText: !_isPasswordVisible,

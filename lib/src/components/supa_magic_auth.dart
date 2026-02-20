@@ -63,7 +63,8 @@ class _SupaMagicAuthState extends State<SupaMagicAuth> {
   @override
   Widget build(BuildContext context) {
     final localization = widget.localization ??
-        SupaMagicAuthLocalization.fromLocale(Localizations.localeOf(context));
+        SupaMagicAuthLocalization.fromLocale(
+            Localizations.maybeLocaleOf(context) ?? const Locale('en'));
     return Form(
       key: _formKey,
       child: Column(

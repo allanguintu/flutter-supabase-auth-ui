@@ -33,10 +33,16 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
   final _phone = TextEditingController();
   final _password = TextEditingController();
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+  bool _passwordHasText = false;
 
   @override
   void initState() {
     super.initState();
+    _password.addListener(() {
+      final hasText = _password.text.isNotEmpty;
+      if (hasText != _passwordHasText) setState(() => _passwordHasText = hasText);
+    });
   }
 
   @override
@@ -49,7 +55,8 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
   @override
   Widget build(BuildContext context) {
     final localization = widget.localization ??
-        SupaPhoneAuthLocalization.fromLocale(Localizations.localeOf(context));
+        SupaPhoneAuthLocalization.fromLocale(
+            Localizations.maybeLocaleOf(context) ?? const Locale('en'));
     final isSigningIn = widget.authAction == SupaAuthAction.signIn;
     return AutofillGroup(
       child: Form(
@@ -87,33 +94,34 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock),
                 label: Text(localization.enterPassword),
-                suffixIcon: Align(
-                  widthFactor: 1.0,
-                  heightFactor: 1.0,
-                  child: IconButton(
-                    iconSize: 20,
-                    icon: Icon(_isPasswordVisible
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined),
-                    onPressed: () => setState(
-                        () => _isPasswordVisible = !_isPasswordVisible),
-                  ),
-                ),
+                suffixIcon: _passwordHasText
+                    ? Align(
+                        widthFactor: 1.0,
+                        heightFactor: 1.0,
+                        child: IconButton(
+                          iconSize: 20,
+                          icon: Icon(_isPasswordVisible
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined),
+                          onPressed: () => setState(
+                              () => _isPasswordVisible = !_isPasswordVisible),
+                        ),
+                      )
+                    : null,
               ),
               obscureText: !_isPasswordVisible,
               controller: _password,
             ),
             spacer(16),
             ElevatedButton(
-              child: Text(
-                isSigningIn ? localization.signIn : localization.signUp,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              onPressed: () async {
-                if (!_formKey.currentState!.validate()) {
-                  return;
-                }
-                try {
+              onPressed: _isLoading
+                  ? null
+                  : () async {
+                      if (!_formKey.currentState!.validate()) {
+                        return;
+                      }
+                      setState(() => _isLoading = true);
+                      try {
                   if (isSigningIn) {
                     final response = await supabase.auth.signInWithPassword(
                       phone: _phone.text,
@@ -145,19 +153,36 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
                   } else {
                     widget.onError?.call(error);
                   }
-                } catch (error) {
-                  if (widget.onError == null && context.mounted) {
-                    context.showErrorSnackBar(
-                        '${localization.unexpectedError}: $error');
-                  } else {
-                    widget.onError?.call(error);
-                  }
-                }
-                setState(() {
-                  _phone.text = '';
-                  _password.text = '';
-                });
-              },
+                      } catch (error) {
+                        if (widget.onError == null && context.mounted) {
+                          context.showErrorSnackBar(
+                              '${localization.unexpectedError}: $error');
+                        } else {
+                          widget.onError?.call(error);
+                        }
+                      } finally {
+                        if (mounted) {
+                          setState(() {
+                            _isLoading = false;
+                            _phone.text = '';
+                            _password.text = '';
+                          });
+                        }
+                      }
+                    },
+              child: _isLoading
+                  ? SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        strokeWidth: 1.5,
+                      ),
+                    )
+                  : Text(
+                      isSigningIn ? localization.signIn : localization.signUp,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
             ),
             spacer(10),
           ],

@@ -261,6 +261,8 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
   bool _isLoading = false;
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  bool _passwordHasText = false;
+  bool _confirmPasswordHasText = false;
 
   /// Resolved localization (auto or manual)
   late SupaEmailAuthLocalization _localization;
@@ -275,13 +277,22 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _localization = widget.localization ??
-        SupaEmailAuthLocalization.fromLocale(Localizations.localeOf(context));
+        SupaEmailAuthLocalization.fromLocale(
+            Localizations.maybeLocaleOf(context) ?? const Locale('en'));
   }
 
   @override
   void initState() {
     super.initState();
     _isSigningIn = widget.isInitiallySigningIn;
+    _passwordController.addListener(() {
+      final hasText = _passwordController.text.isNotEmpty;
+      if (hasText != _passwordHasText) setState(() => _passwordHasText = hasText);
+    });
+    _confirmPasswordController.addListener(() {
+      final hasText = _confirmPasswordController.text.isNotEmpty;
+      if (hasText != _confirmPasswordHasText) setState(() => _confirmPasswordHasText = hasText);
+    });
     _metadataControllers = Map.fromEntries((widget.metadataFields ?? []).map(
       (metadataField) => MapEntry(
         metadataField.key,
@@ -362,18 +373,20 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                 decoration: InputDecoration(
                   prefixIcon: widget.prefixIconPassword,
                   label: Text(localization.enterPassword),
-                  suffixIcon: Align(
-                    widthFactor: 1.0,
-                    heightFactor: 1.0,
-                    child: IconButton(
-                      iconSize: 20,
-                      icon: Icon(_isPasswordVisible
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined),
-                      onPressed: () => setState(
-                          () => _isPasswordVisible = !_isPasswordVisible),
-                    ),
-                  ),
+                  suffixIcon: _passwordHasText
+                      ? Align(
+                          widthFactor: 1.0,
+                          heightFactor: 1.0,
+                          child: IconButton(
+                            iconSize: 20,
+                            icon: Icon(_isPasswordVisible
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined),
+                            onPressed: () => setState(
+                                () => _isPasswordVisible = !_isPasswordVisible),
+                          ),
+                        )
+                      : null,
                 ),
                 obscureText: !_isPasswordVisible,
                 controller: _passwordController,
@@ -505,7 +518,7 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                         ])
                     .expand((element) => element),
               ElevatedButton(
-                onPressed: _signInSignUp,
+                onPressed: _isLoading ? null : _signInSignUp,
                 child: (_isLoading)
                     ? SizedBox(
                         height: 16,
@@ -549,8 +562,17 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
             if (_isSigningIn && _isRecoveringPassword) ...[
               spacer(16),
               ElevatedButton(
-                onPressed: _passwordRecovery,
-                child: Text(localization.sendPasswordReset),
+                onPressed: _isLoading ? null : _passwordRecovery,
+                child: _isLoading
+                    ? SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          strokeWidth: 1.5,
+                        ),
+                      )
+                    : Text(localization.sendPasswordReset),
               ),
               spacer(16),
               TextButton(

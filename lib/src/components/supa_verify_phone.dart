@@ -44,7 +44,8 @@ class _SupaVerifyPhoneState extends State<SupaVerifyPhone> {
   @override
   Widget build(BuildContext context) {
     final localization = widget.localization ??
-        SupaVerifyPhoneLocalization.fromLocale(Localizations.localeOf(context));
+        SupaVerifyPhoneLocalization.fromLocale(
+            Localizations.maybeLocaleOf(context) ?? const Locale('en'));
     var args = ModalRoute.of(context)?.settings.arguments;
     if (args != null) data = args as Map;
     return Form(
