@@ -87,13 +87,17 @@ class _SupaPhoneAuthState extends State<SupaPhoneAuth> {
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock),
                 label: Text(localization.enterPassword),
-                suffixIcon: IconButton(
-                  iconSize: 20,
-                  icon: Icon(_isPasswordVisible
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined),
-                  onPressed: () =>
-                      setState(() => _isPasswordVisible = !_isPasswordVisible),
+                suffixIcon: Align(
+                  widthFactor: 1.0,
+                  heightFactor: 1.0,
+                  child: IconButton(
+                    iconSize: 20,
+                    icon: Icon(_isPasswordVisible
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined),
+                    onPressed: () => setState(
+                        () => _isPasswordVisible = !_isPasswordVisible),
+                  ),
                 ),
               ),
               obscureText: !_isPasswordVisible,
