@@ -189,7 +189,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
 
     // Try to get access token silently (may be null if not yet authorized)
     final authorization = await googleUser.authorizationClient
-        .authorizationForScopes([]);
+        .authorizationForScopes(['email']);
     final accessToken = authorization?.accessToken;
 
     return supabase.auth.signInWithIdToken(
