@@ -152,6 +152,12 @@ class SupaSocialsAuth extends StatefulWidget {
     this.footerBuilder,
   });
 
+  static Future<void> signOut() async {
+    try {
+      await GoogleSignIn.instance.signOut();
+    } catch (_) {}
+  }
+
   @override
   State<SupaSocialsAuth> createState() => _SupaSocialsAuthState();
 }
