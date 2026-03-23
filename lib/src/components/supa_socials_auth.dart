@@ -167,22 +167,21 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
   late SupaSocialsAuthLocalization localization;
   bool _isLoading = false;
 
-  static bool _googleSignInInitialized = false;
-
   /// Performs Google sign in on Android and iOS
   Future<AuthResponse> _nativeGoogleSignIn({
     required String? webClientId,
     required String? iosClientId,
   }) async {
+    final rawNonce = supabase.auth.generateRawNonce();
+    final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
     final googleSignIn = GoogleSignIn.instance;
 
-    if (!_googleSignInInitialized) {
-      await googleSignIn.initialize(
-        clientId: iosClientId,
-        serverClientId: webClientId,
-      );
-      _googleSignInInitialized = true;
-    }
+    await googleSignIn.initialize(
+      clientId: iosClientId,
+      serverClientId: webClientId,
+      nonce: hashedNonce,
+    );
 
     final googleUser = await googleSignIn.authenticate();
     final idToken = googleUser.authentication.idToken;
@@ -202,6 +201,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
       provider: OAuthProvider.google,
       idToken: idToken,
       accessToken: accessToken,
+      nonce: rawNonce,
     );
   }
 
