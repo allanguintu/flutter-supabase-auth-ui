@@ -10,6 +10,7 @@ void main() {
 
     expect(source, contains('enableNativeGoogleLightweightAuth'));
     expect(source, contains('useNativeGoogleLightweightButtonAuth'));
+    expect(source, contains('onNativeAuthStarted'));
     expect(source, contains('static Future<bool> attemptNativeGoogleLightweightAuth'));
     expect(source, contains('NativeGoogleAuthController'));
     expect(source, contains('attemptLightweightSignIn'));

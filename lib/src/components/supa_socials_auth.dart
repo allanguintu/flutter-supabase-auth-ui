@@ -100,6 +100,9 @@ class SupaSocialsAuth extends StatefulWidget {
   /// lightweight bottom sheet instead of the interactive Google flow.
   final bool useNativeGoogleLightweightButtonAuth;
 
+  /// Called just before a native provider UI is opened.
+  final FutureOr<void> Function(OAuthProvider provider)? onNativeAuthStarted;
+
   /// Whether to use native Apple sign in on iOS and macOS
   final bool enableNativeAppleAuth;
 
@@ -151,6 +154,7 @@ class SupaSocialsAuth extends StatefulWidget {
     this.nativeGoogleAuthConfig,
     this.enableNativeGoogleLightweightAuth = false,
     this.useNativeGoogleLightweightButtonAuth = false,
+    this.onNativeAuthStarted,
     this.enableNativeAppleAuth = true,
     required this.socialProviders,
     this.colored = true,
@@ -213,6 +217,8 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
     required String? webClientId,
     required String? iosClientId,
   }) async {
+    await widget.onNativeAuthStarted?.call(OAuthProvider.google);
+
     final controller = _nativeGoogleAuthController(
       webClientId: webClientId,
       iosClientId: iosClientId,
@@ -245,6 +251,8 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
 
   /// Performs Apple sign in on iOS or macOS
   Future<AuthResponse> _nativeAppleSignIn() async {
+    await widget.onNativeAuthStarted?.call(OAuthProvider.apple);
+
     final rawNonce = supabase.auth.generateRawNonce();
     final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
