@@ -9,6 +9,7 @@ void main() {
     ).readAsStringSync();
 
     expect(source, contains('enableNativeGoogleLightweightAuth'));
+    expect(source, contains('static Future<bool> attemptNativeGoogleLightweightAuth'));
     expect(source, contains('NativeGoogleAuthController'));
     expect(source, contains('attemptLightweightSignIn'));
     expect(source, contains('signInInteractively'));

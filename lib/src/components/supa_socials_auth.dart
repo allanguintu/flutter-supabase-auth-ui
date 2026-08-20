@@ -168,6 +168,31 @@ class SupaSocialsAuth extends StatefulWidget {
     } catch (_) {}
   }
 
+  static Future<bool> attemptNativeGoogleLightweightAuth({
+    required NativeGoogleAuthConfig nativeGoogleAuthConfig,
+    Map<OAuthProvider, String>? scopes,
+  }) async {
+    final webClientId = nativeGoogleAuthConfig.webClientId;
+    if (webClientId == null || kIsWeb || !Platform.isAndroid) return false;
+    if (Supabase.instance.client.auth.currentSession != null) return false;
+
+    return NativeGoogleAuthController(
+      googleGateway: GoogleSignInNativeGoogleAuthGateway(
+        webClientId: webClientId,
+        iosClientId: nativeGoogleAuthConfig.iosClientId,
+      ),
+      supabaseAuth: SupabaseNativeGoogleAuth(),
+      scopes: _nativeGoogleScopes(scopes),
+    ).attemptLightweightSignIn();
+  }
+
+  static List<String> _nativeGoogleScopes(Map<OAuthProvider, String>? scopes) {
+    final scopeString = scopes?[OAuthProvider.google];
+    return scopeString != null && scopeString.isNotEmpty
+        ? scopeString.split(' ')
+        : ['email'];
+  }
+
   @override
   State<SupaSocialsAuth> createState() => _SupaSocialsAuthState();
 }
@@ -199,15 +224,8 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
         iosClientId: iosClientId,
       ),
       supabaseAuth: SupabaseNativeGoogleAuth(),
-      scopes: _nativeGoogleScopes(),
+      scopes: SupaSocialsAuth._nativeGoogleScopes(widget.scopes),
     );
-  }
-
-  List<String> _nativeGoogleScopes() {
-    final scopeString = widget.scopes?[OAuthProvider.google];
-    return scopeString != null && scopeString.isNotEmpty
-        ? scopeString.split(' ')
-        : ['email'];
   }
 
   /// Performs Apple sign in on iOS or macOS
@@ -283,10 +301,10 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
 
     _nativeGoogleLightweightStarted = true;
     try {
-      await _nativeGoogleAuthController(
-        webClientId: webClientId,
-        iosClientId: googleAuthConfig?.iosClientId,
-      ).attemptLightweightSignIn();
+      await SupaSocialsAuth.attemptNativeGoogleLightweightAuth(
+        nativeGoogleAuthConfig: googleAuthConfig!,
+        scopes: widget.scopes,
+      );
     } on AuthException catch (error) {
       _handleAuthError(error, fallbackMessage: error.message);
     } catch (error) {
