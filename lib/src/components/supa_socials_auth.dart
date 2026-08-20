@@ -96,6 +96,10 @@ class SupaSocialsAuth extends StatefulWidget {
   /// Google button.
   final bool enableNativeGoogleLightweightAuth;
 
+  /// Whether the native Google button should use Android Credential Manager's
+  /// lightweight bottom sheet instead of the interactive Google flow.
+  final bool useNativeGoogleLightweightButtonAuth;
+
   /// Whether to use native Apple sign in on iOS and macOS
   final bool enableNativeAppleAuth;
 
@@ -146,6 +150,7 @@ class SupaSocialsAuth extends StatefulWidget {
     super.key,
     this.nativeGoogleAuthConfig,
     this.enableNativeGoogleLightweightAuth = false,
+    this.useNativeGoogleLightweightButtonAuth = false,
     this.enableNativeAppleAuth = true,
     required this.socialProviders,
     this.colored = true,
@@ -208,10 +213,20 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
     required String? webClientId,
     required String? iosClientId,
   }) async {
-    await _nativeGoogleAuthController(
+    final controller = _nativeGoogleAuthController(
       webClientId: webClientId,
       iosClientId: iosClientId,
-    ).signInInteractively();
+    );
+
+    if (widget.useNativeGoogleLightweightButtonAuth &&
+        webClientId != null &&
+        !kIsWeb &&
+        Platform.isAndroid) {
+      await controller.attemptLightweightSignIn();
+      return;
+    }
+
+    await controller.signInInteractively();
   }
 
   NativeGoogleAuthController _nativeGoogleAuthController({
