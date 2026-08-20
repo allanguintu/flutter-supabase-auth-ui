@@ -100,7 +100,7 @@ class SupaSocialsAuth extends StatefulWidget {
   /// lightweight bottom sheet instead of the interactive Google flow.
   final bool useNativeGoogleLightweightButtonAuth;
 
-  /// Called just before a native provider UI is opened.
+  /// Called just before a provider auth UI is opened.
   final FutureOr<void> Function(OAuthProvider provider)? onNativeAuthStarted;
 
   /// Whether to use native Apple sign in on iOS and macOS
@@ -212,12 +212,16 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
   bool _isLoading = false;
   bool _nativeGoogleLightweightStarted = false;
 
+  Future<void> _notifyAuthStarted(OAuthProvider provider) async {
+    await widget.onNativeAuthStarted?.call(provider);
+  }
+
   /// Performs Google sign in on Android and iOS
   Future<void> _nativeGoogleSignIn({
     required String? webClientId,
     required String? iosClientId,
   }) async {
-    await widget.onNativeAuthStarted?.call(OAuthProvider.google);
+    await _notifyAuthStarted(OAuthProvider.google);
 
     final controller = _nativeGoogleAuthController(
       webClientId: webClientId,
@@ -251,7 +255,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
 
   /// Performs Apple sign in on iOS or macOS
   Future<AuthResponse> _nativeAppleSignIn() async {
-    await widget.onNativeAuthStarted?.call(OAuthProvider.apple);
+    await _notifyAuthStarted(OAuthProvider.apple);
 
     final rawNonce = supabase.auth.generateRawNonce();
     final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
@@ -457,6 +461,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
 
             final user = supabase.auth.currentUser;
             if (user?.isAnonymous == true) {
+              await _notifyAuthStarted(socialProvider);
               await supabase.auth.linkIdentity(
                 socialProvider,
                 redirectTo: widget.redirectUrl,
@@ -466,6 +471,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
               return;
             }
 
+            await _notifyAuthStarted(socialProvider);
             await supabase.auth.signInWithOAuth(
               socialProvider,
               redirectTo: widget.redirectUrl,
