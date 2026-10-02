@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
@@ -103,6 +102,10 @@ class SupaSocialsAuth extends StatefulWidget {
   /// Called just before a provider auth UI is opened.
   final FutureOr<void> Function(OAuthProvider provider)? onNativeAuthStarted;
 
+  /// Called when a native provider attempt finishes, including silent dismissal.
+  /// Successful sign-in may still be hydrating the application profile.
+  final void Function(OAuthProvider provider)? onNativeAuthFinished;
+
   /// Whether to use native Apple sign in on iOS and macOS
   final bool enableNativeAppleAuth;
 
@@ -155,6 +158,7 @@ class SupaSocialsAuth extends StatefulWidget {
     this.enableNativeGoogleLightweightAuth = false,
     this.useNativeGoogleLightweightButtonAuth = false,
     this.onNativeAuthStarted,
+    this.onNativeAuthFinished,
     this.enableNativeAppleAuth = true,
     required this.socialProviders,
     this.colored = true,
@@ -182,7 +186,11 @@ class SupaSocialsAuth extends StatefulWidget {
     Map<OAuthProvider, String>? scopes,
   }) async {
     final webClientId = nativeGoogleAuthConfig.webClientId;
-    if (webClientId == null || kIsWeb || !Platform.isAndroid) return false;
+    if (webClientId == null ||
+        kIsWeb ||
+        defaultTargetPlatform != TargetPlatform.android) {
+      return false;
+    }
     if (Supabase.instance.client.auth.currentSession != null) return false;
 
     return NativeGoogleAuthController(
@@ -231,7 +239,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
     if (widget.useNativeGoogleLightweightButtonAuth &&
         webClientId != null &&
         !kIsWeb &&
-        Platform.isAndroid) {
+        (defaultTargetPlatform == TargetPlatform.android)) {
       await controller.attemptLightweightSignIn();
       return;
     }
@@ -324,7 +332,11 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
 
     final googleAuthConfig = widget.nativeGoogleAuthConfig;
     final webClientId = googleAuthConfig?.webClientId;
-    if (webClientId == null || kIsWeb || !Platform.isAndroid) return;
+    if (webClientId == null ||
+        kIsWeb ||
+        defaultTargetPlatform != TargetPlatform.android) {
+      return;
+    }
 
     _nativeGoogleLightweightStarted = true;
     try {
@@ -436,14 +448,21 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
             if (socialProvider == OAuthProvider.google) {
               final webClientId = googleAuthConfig?.webClientId;
               final iosClientId = googleAuthConfig?.iosClientId;
-              final shouldPerformNativeGoogleSignIn =
-                  (webClientId != null && !kIsWeb && Platform.isAndroid) ||
-                      (iosClientId != null && !kIsWeb && Platform.isIOS);
+              final shouldPerformNativeGoogleSignIn = (webClientId != null &&
+                      !kIsWeb &&
+                      (defaultTargetPlatform == TargetPlatform.android)) ||
+                  (iosClientId != null &&
+                      !kIsWeb &&
+                      (defaultTargetPlatform == TargetPlatform.iOS));
               if (shouldPerformNativeGoogleSignIn) {
-                await _nativeGoogleSignIn(
-                  webClientId: webClientId,
-                  iosClientId: iosClientId,
-                );
+                try {
+                  await _nativeGoogleSignIn(
+                    webClientId: webClientId,
+                    iosClientId: iosClientId,
+                  );
+                } finally {
+                  widget.onNativeAuthFinished?.call(socialProvider);
+                }
                 return;
               }
             }
@@ -451,10 +470,18 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
             // Check if native Apple login should be performed
             if (socialProvider == OAuthProvider.apple) {
               final shouldPerformNativeAppleSignIn =
-                  (isNativeAppleAuthEnabled && !kIsWeb && Platform.isIOS) ||
-                      (isNativeAppleAuthEnabled && !kIsWeb && Platform.isMacOS);
+                  (isNativeAppleAuthEnabled &&
+                          !kIsWeb &&
+                          (defaultTargetPlatform == TargetPlatform.iOS)) ||
+                      (isNativeAppleAuthEnabled &&
+                          !kIsWeb &&
+                          (defaultTargetPlatform == TargetPlatform.macOS));
               if (shouldPerformNativeAppleSignIn) {
-                await _nativeAppleSignIn();
+                try {
+                  await _nativeAppleSignIn();
+                } finally {
+                  widget.onNativeAuthFinished?.call(socialProvider);
+                }
                 return;
               }
             }

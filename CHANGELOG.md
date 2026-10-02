@@ -1,3 +1,8 @@
+## Unreleased
+
+- Add `onNativeAuthFinished` to social login buttons so callers can clear loading
+  feedback after native Google/Apple attempts, including silent Google dismissal.
+
 ## 0.6.5
 
 - feat: Add `clearOnError` (bool, default `false`) to `SupaEmailAuth` and `SupaPhoneAuth` — clears password fields after an authentication error
