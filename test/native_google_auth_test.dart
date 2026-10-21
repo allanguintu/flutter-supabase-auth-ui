@@ -1,7 +1,56 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_auth_ui/src/components/native_google_auth.dart';
 
 void main() {
+  test('button uses available Credential Manager account without interactive prompt', () async {
+    final gateway = _FakeGoogleGateway(
+      credential: const NativeGoogleCredential(idToken: 'existing-token'),
+    );
+    final auth = _FakeSupabaseGoogleAuth(rawNonce: 'nonce');
+    await NativeGoogleAuthController(googleGateway: gateway, supabaseAuth: auth, scopes: const ['email'])
+        .signInFromButton(preferLightweight: true);
+    expect(gateway.requests.map((r) => r.mode), [NativeGoogleSignInMode.lightweight]);
+    expect(gateway.requests.single.reportAllExceptions, isTrue);
+    expect(auth.signIns.single.idToken, 'existing-token');
+  });
+
+  test('button falls back once when Credential Manager has no credential', () async {
+    final gateway = _FakeGoogleGateway(
+      missingLightweight: true,
+      credential: const NativeGoogleCredential(idToken: 'added-account-token'),
+    );
+    final auth = _FakeSupabaseGoogleAuth(rawNonce: 'nonce');
+    await NativeGoogleAuthController(googleGateway: gateway, supabaseAuth: auth, scopes: const ['email'])
+        .signInFromButton(preferLightweight: true);
+    expect(gateway.requests.map((r) => r.mode), [NativeGoogleSignInMode.lightweight, NativeGoogleSignInMode.interactive]);
+    expect(auth.signIns.single.idToken, 'added-account-token');
+  });
+
+  for (final code in [GoogleSignInExceptionCode.canceled, GoogleSignInExceptionCode.interrupted, GoogleSignInExceptionCode.unknownError]) {
+    test('button never falls back after $code', () async {
+      final error = GoogleSignInException(code: code);
+      final gateway = _FakeGoogleGateway(error: error);
+      final auth = _FakeSupabaseGoogleAuth(rawNonce: 'nonce');
+      await expectLater(
+        NativeGoogleAuthController(googleGateway: gateway, supabaseAuth: auth, scopes: const ['email'])
+          .signInFromButton(preferLightweight: true),
+        throwsA(same(error)),
+      );
+      expect(gateway.requests.map((r) => r.mode), [NativeGoogleSignInMode.lightweight]);
+      expect(auth.signIns, isEmpty);
+    });
+  }
+
+  test('non-lightweight platforms retain direct interactive flow', () async {
+    final gateway = _FakeGoogleGateway(credential: const NativeGoogleCredential(idToken: 'interactive-token'));
+    final auth = _FakeSupabaseGoogleAuth(rawNonce: 'nonce');
+    await NativeGoogleAuthController(googleGateway: gateway, supabaseAuth: auth, scopes: const ['email'])
+        .signInFromButton(preferLightweight: false);
+    expect(gateway.requests.map((r) => r.mode), [NativeGoogleSignInMode.interactive]);
+    expect(auth.signIns.single.idToken, 'interactive-token');
+  });
+
   test('lightweight sign-in exchanges Google ID token with Supabase', () async {
     final gateway = _FakeGoogleGateway(
       credential: const NativeGoogleCredential(
@@ -80,7 +129,10 @@ void main() {
 }
 
 class _FakeGoogleGateway implements NativeGoogleAuthGateway {
-  _FakeGoogleGateway({this.credential});
+  _FakeGoogleGateway({this.credential, this.missingLightweight = false, this.error});
+
+  final bool missingLightweight;
+  final Object? error;
 
   final NativeGoogleCredential? credential;
   final List<NativeGoogleSignInRequest> requests =
@@ -91,6 +143,8 @@ class _FakeGoogleGateway implements NativeGoogleAuthGateway {
     NativeGoogleSignInRequest request,
   ) async {
     requests.add(request);
+    if (error != null) throw error!;
+    if (missingLightweight && request.mode == NativeGoogleSignInMode.lightweight) return null;
     return credential;
   }
 

@@ -236,15 +236,12 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
       iosClientId: iosClientId,
     );
 
-    if (widget.useNativeGoogleLightweightButtonAuth &&
-        webClientId != null &&
-        !kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.android)) {
-      await controller.attemptLightweightSignIn();
-      return;
-    }
-
-    await controller.signInInteractively();
+    await controller.signInFromButton(
+      preferLightweight: widget.useNativeGoogleLightweightButtonAuth &&
+          webClientId != null &&
+          !kIsWeb &&
+          defaultTargetPlatform == TargetPlatform.android,
+    );
   }
 
   NativeGoogleAuthController _nativeGoogleAuthController({

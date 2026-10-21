@@ -15,6 +15,6 @@ void main() {
     expect(source, contains('static Future<bool> attemptNativeGoogleLightweightAuth'));
     expect(source, contains('NativeGoogleAuthController'));
     expect(source, contains('attemptLightweightSignIn'));
-    expect(source, contains('signInInteractively'));
+    expect(source, contains('signInFromButton'));
   });
 }

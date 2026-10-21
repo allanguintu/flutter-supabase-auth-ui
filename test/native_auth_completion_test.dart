@@ -31,7 +31,7 @@ void main() {
   });
   tearDownAll(() => Supabase.instance.dispose());
 
-  testWidgets('silent native cancellation completes and allows another attempt',
+  testWidgets('explicit native cancellation completes and allows another attempt',
       (tester) async {
     final original = GoogleSignInPlatform.instance;
     final google = _Google();
@@ -55,13 +55,15 @@ void main() {
       await tester.tap(find.text('Continue with Google'));
       await tester.pump();
       expect(events.last, 'started');
-      google.attempt.complete(null);
+      google.attempt.completeError(
+        const GoogleSignInException(code: GoogleSignInExceptionCode.canceled),
+      );
       await tester.pumpAndSettle();
-      expect(events.last, 'finished');
+      expect(events.sublist(events.length - 2), ['finished', 'error']);
       expect(
           tester.widget<ElevatedButton>(find.byType(ElevatedButton)).onPressed,
           isNotNull);
     }
-    expect(events, ['started', 'finished', 'started', 'finished']);
+    expect(events, ['started', 'finished', 'error', 'started', 'finished', 'error']);
   }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 }

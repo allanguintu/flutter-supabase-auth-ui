@@ -1,5 +1,10 @@
 ## Unreleased
 
+- Keep Credential Manager first for explicit Android Google sign-in and fall back
+  to interactive account setup only when no credential is available. Propagate
+  cancellation and errors without opening a second prompt. Automatic lightweight
+  authentication retains its existing behavior.
+
 - Add `onNativeAuthFinished` to social login buttons so callers can clear loading
   feedback after native Google/Apple attempts, including silent Google dismissal.
 

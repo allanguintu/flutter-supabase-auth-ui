@@ -10,11 +10,13 @@ class NativeGoogleSignInRequest {
   final NativeGoogleSignInMode mode;
   final String hashedNonce;
   final List<String> scopes;
+  final bool reportAllExceptions;
 
   const NativeGoogleSignInRequest({
     required this.mode,
     required this.hashedNonce,
     required this.scopes,
+    this.reportAllExceptions = false,
   });
 }
 
@@ -55,14 +57,25 @@ class NativeGoogleAuthController {
     required this.scopes,
   });
 
-  Future<bool> attemptLightweightSignIn() async {
+  Future<bool> attemptLightweightSignIn({bool reportAllExceptions = false}) async {
     final result = await _requestGoogleCredential(
       NativeGoogleSignInMode.lightweight,
+      reportAllExceptions: reportAllExceptions,
     );
     if (result == null) return false;
 
     await _signInToSupabase(result);
     return true;
+  }
+
+  /// Explicit button: retain Credential Manager, falling back only for no credential.
+  /// Cancellation and errors propagate without launching a second prompt.
+  Future<void> signInFromButton({required bool preferLightweight}) async {
+    if (preferLightweight &&
+        await attemptLightweightSignIn(reportAllExceptions: true)) {
+      return;
+    }
+    await signInInteractively();
   }
 
   Future<void> signInInteractively() async {
@@ -77,8 +90,9 @@ class NativeGoogleAuthController {
   Future<void> signOut() => googleGateway.signOut();
 
   Future<_NativeGoogleSignInResult?> _requestGoogleCredential(
-    NativeGoogleSignInMode mode,
-  ) async {
+    NativeGoogleSignInMode mode, {
+    bool reportAllExceptions = false,
+  }) async {
     final rawNonce = supabaseAuth.generateRawNonce();
     final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
@@ -87,6 +101,7 @@ class NativeGoogleAuthController {
         mode: mode,
         hashedNonce: hashedNonce,
         scopes: scopes,
+        reportAllExceptions: reportAllExceptions,
       ),
     );
     if (credential == null) return null;
@@ -139,7 +154,9 @@ class GoogleSignInNativeGoogleAuthGateway implements NativeGoogleAuthGateway {
 
     final googleUser = switch (request.mode) {
       NativeGoogleSignInMode.lightweight =>
-        await googleSignIn.attemptLightweightAuthentication(),
+        await googleSignIn.attemptLightweightAuthentication(
+          reportAllExceptions: request.reportAllExceptions,
+        ),
       NativeGoogleSignInMode.interactive => await googleSignIn.authenticate(),
     };
     if (googleUser == null) return null;
