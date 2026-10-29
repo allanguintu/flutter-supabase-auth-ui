@@ -308,6 +308,10 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
           context.showSnackBar(localization.successSignInMessage);
         }
       }
+    }, onError: (Object error, StackTrace stackTrace) {
+      if (!mounted) return;
+      _handleAuthError(error,
+          fallbackMessage: error is AuthException ? error.message : null);
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
